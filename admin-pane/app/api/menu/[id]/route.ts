@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { MenuItem } from "@/models/MenuItem";
 
-// GET: Fetch a single menu item (For "Dynamic food details page")
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+// GET: Fetch single menu item
+export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
     await connectToDatabase();
+    const params = await context.params;
     const menuItem = await MenuItem.findById(params.id).populate("category");
     
     if (!menuItem) return NextResponse.json({ error: "Menu item not found" }, { status: 404 });
@@ -15,12 +16,13 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-// PUT: Update a menu item (e.g., toggle availability)
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+// PUT: Update menu item
+export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
     await connectToDatabase();
+    const params = await context.params;
     const body = await req.json();
-    const updatedMenuItem = await MenuItem.findByIdAndUpdate(params.id, body, { new: true });
+    const updatedMenuItem = await MenuItem.findByIdAndUpdate(params.id, body, { returnDocument: 'after' });
     
     if (!updatedMenuItem) return NextResponse.json({ error: "Menu item not found" }, { status: 404 });
     return NextResponse.json(updatedMenuItem, { status: 200 });
@@ -29,10 +31,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-// DELETE: Delete a menu item
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+// DELETE: Delete menu item
+export async function DELETE(req: Request, context: { params: Promise<{ id: string }> }) {
   try {
     await connectToDatabase();
+    const params = await context.params;
     const deletedMenuItem = await MenuItem.findByIdAndDelete(params.id);
     
     if (!deletedMenuItem) return NextResponse.json({ error: "Menu item not found" }, { status: 404 });

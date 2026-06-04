@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, ShoppingCart } from "lucide-react";
@@ -38,8 +39,8 @@ export default function MenuPage() {
     const fetchData = async () => {
       try {
         const [menuRes, catRes] = await Promise.all([
-          fetch("http://localhost:3001/api/menu"),
-          fetch("http://localhost:3001/api/categories")
+           fetch(`${API_BASE_URL}/api/menu`),
+           fetch(`${API_BASE_URL}/api/categories`)
         ]);
         
         const menuData = await menuRes.json();

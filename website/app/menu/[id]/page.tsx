@@ -1,5 +1,6 @@
 "use client";
 
+import { API_BASE_URL } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, ShoppingCart, CheckCircle, XCircle } from "lucide-react";
@@ -28,7 +29,7 @@ export default function FoodDetailsPage() {
   useEffect(() => {
     const fetchItemDetails = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/api/menu/${params.id}`);
+        const res = await fetch(`${API_BASE_URL}/api/menu/${params.id}`);
         if (!res.ok) throw new Error("Item not found");
         const data = await res.json();
         setItem(data);

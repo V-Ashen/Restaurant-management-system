@@ -20,9 +20,14 @@ export default function Dashboard() {
       try {
         const res = await fetch("/api/orders");
         const data = await res.json();
-        setOrders(data);
+        if (Array.isArray(data)) {
+          setOrders(data);
+        } else {
+          setOrders([]); // Fallback to empty array if API fails
+        }
       } catch (error) {
         console.error("Failed to fetch orders for dashboard");
+        setOrders([]);
       } finally {
         setLoading(false);
       }
@@ -30,11 +35,11 @@ export default function Dashboard() {
     fetchOrders();
   }, []);
 
-  // Calculate Metrics
-  const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
-  const totalOrders = orders.length;
-  const pendingOrders = orders.filter(o => o.status === "Pending" || o.status === "Preparing").length;
-  const completedOrders = orders.filter(o => o.status === "Completed").length;
+  // Safe metric calculations
+  const totalRevenue = Array.isArray(orders) ? orders.reduce((sum, order) => sum + order.totalAmount, 0) : 0;
+  const totalOrders = Array.isArray(orders) ? orders.length : 0;
+  const pendingOrders = Array.isArray(orders) ? orders.filter(o => o.status === "Pending" || o.status === "Preparing").length : 0;
+  const completedOrders = Array.isArray(orders) ? orders.filter(o => o.status === "Completed").length : 0;
 
   return (
     <Sidebar>
@@ -45,9 +50,7 @@ export default function Dashboard() {
           <div className="text-gray-500 font-medium">Loading analytics...</div>
         ) : (
           <>
-            {/* Analytics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-              
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
                 <div className="w-14 h-14 bg-green-100 text-green-600 rounded-xl flex items-center justify-center">
                   <DollarSign size={28} />
@@ -87,10 +90,8 @@ export default function Dashboard() {
                   <p className="text-3xl font-black text-gray-900">{completedOrders}</p>
                 </div>
               </div>
-
             </div>
 
-            {/* Recent Orders Table Snapshot */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-6 border-b border-gray-100">
                 <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
@@ -106,7 +107,7 @@ export default function Dashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {orders.slice(0, 5).map((order) => (
+                    {Array.isArray(orders) && orders.slice(0, 5).map((order) => (
                       <tr key={order._id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm font-mono text-gray-500">{order._id.substring(18)}</td>
                         <td className="px-6 py-4 text-sm text-gray-600">{new Date(order.createdAt).toLocaleDateString()}</td>
@@ -118,7 +119,7 @@ export default function Dashboard() {
                         <td className="px-6 py-4 font-bold text-gray-900">${order.totalAmount.toFixed(2)}</td>
                       </tr>
                     ))}
-                    {orders.length === 0 && (
+                    {(!Array.isArray(orders) || orders.length === 0) && (
                       <tr>
                         <td colSpan={4} className="px-6 py-8 text-center text-gray-500">No orders placed yet.</td>
                       </tr>

@@ -3,55 +3,66 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Utensils, Tags, ClipboardList, MessageSquare, LogOut } from "lucide-react";
+import { LayoutDashboard, Utensils, Tags, ClipboardList, MessageSquare, Users, Shield, LogOut } from "lucide-react";
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  
   const [adminName, setAdminName] = useState("");
+  const [adminRole, setAdminRole] = useState("");
+  const [permissions, setPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Authentication Check
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
-    const name = localStorage.getItem("adminName");
-    
     if (!token) {
-      router.push("/login"); // Kick to login if no token
-    } else {
-      setAdminName(name || "Admin");
-      setIsLoading(false);
+      router.push("/login");
+      return;
     }
+    
+    setAdminName(localStorage.getItem("adminName") || "User");
+    setAdminRole(localStorage.getItem("adminRole") || "Staff");
+    
+    // Load permissions from storage
+    const storedPerms = localStorage.getItem("adminPermissions");
+    if (storedPerms) setPermissions(JSON.parse(storedPerms));
+    
+    setIsLoading(false);
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem("adminToken");
-    localStorage.removeItem("adminName");
+    localStorage.clear(); // Clears everything securely
     router.push("/login");
   };
 
+  // Define all possible links and their REQUIRED permission
   const navLinks = [
-    { name: "Dashboard", href: "/", icon: <LayoutDashboard size={20} /> },
-    { name: "Menu Items", href: "/menu", icon: <Utensils size={20} /> },
-    { name: "Categories", href: "/categories", icon: <Tags size={20} /> },
-    { name: "Orders & Billing", href: "/orders", icon: <ClipboardList size={20} /> },
-    { name: "Messages", href: "/messages", icon: <MessageSquare size={20} /> },
+    { name: "Dashboard", href: "/", icon: <LayoutDashboard size={20} />, requiredPerm: "view_dashboard" },
+    { name: "Orders & Billing", href: "/orders", icon: <ClipboardList size={20} />, requiredPerm: "manage_orders" },
+    { name: "Menu Items", href: "/menu", icon: <Utensils size={20} />, requiredPerm: "manage_menu" },
+    { name: "Categories", href: "/categories", icon: <Tags size={20} />, requiredPerm: "manage_categories" },
+    { name: "Messages", href: "/messages", icon: <MessageSquare size={20} />, requiredPerm: "manage_messages" },
+    { name: "Manage Staff", href: "/users", icon: <Users size={20} />, requiredPerm: "manage_users" },
+    { name: "Roles & Perms", href: "/roles", icon: <Shield size={20} />, requiredPerm: "manage_roles" },
   ];
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center bg-gray-50">Loading...</div>;
+  if (isLoading) return <div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>;
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
       <aside className="w-64 bg-gray-900 text-white flex flex-col">
         <div className="p-6">
           <h2 className="text-2xl font-extrabold text-blue-500">Admin<span className="text-white">Panel</span></h2>
-          <p className="text-gray-400 text-sm mt-1">Welcome, {adminName}</p>
+          <p className="text-gray-400 text-sm mt-1">{adminName} ({adminRole})</p>
         </div>
 
-        <nav className="flex-grow mt-6">
+        <nav className="flex-grow mt-2">
           <ul className="space-y-2 px-4">
             {navLinks.map((link) => {
+              // ONLY SHOW LINK IF USER HAS PERMISSION
+              if (!permissions.includes(link.requiredPerm)) return null;
+
               const isActive = pathname === link.href;
               return (
                 <li key={link.name}>
@@ -73,7 +84,6 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* Main Content Area */}
       <main className="flex-grow p-8 overflow-y-auto h-screen">
         {children}
       </main>

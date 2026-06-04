@@ -28,6 +28,8 @@ export default function LoginPage() {
       // Save token to localStorage for authentication
       localStorage.setItem("adminToken", data.token);
       localStorage.setItem("adminName", data.admin.name);
+      localStorage.setItem("adminRole", data.admin.roleName);
+      localStorage.setItem("adminPermissions", JSON.stringify(data.admin.permissions));
       
       router.push("/"); // Redirect to dashboard
     } catch (err: any) {

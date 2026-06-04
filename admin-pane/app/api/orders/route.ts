@@ -2,15 +2,18 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Order } from "@/models/Order";
 import { BillingRecord } from "@/models/BillingRecord";
+import { MenuItem } from "@/models/MenuItem";
 
 // GET: Fetch all orders for the admin panel
 export async function GET() {
   try {
     await connectToDatabase();
     // Populate the menuItem details inside the items array
+    const _menuItemCheck = await MenuItem.findOne({});
     const orders = await Order.find({}).populate("items.menuItem").sort({ createdAt: -1 });
     return NextResponse.json(orders, { status: 200 });
   } catch (error) {
+    console.error("🚨 GET ORDERS DATABASE ERROR:", error);
     return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
   }
 }

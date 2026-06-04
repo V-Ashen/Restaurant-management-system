@@ -26,15 +26,22 @@ interface Order {
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null); // For the details modal
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   const fetchOrders = async () => {
     try {
       const res = await fetch("/api/orders");
       const data = await res.json();
-      setOrders(data);
+      
+      // Safe check to ensure we got an array
+      if (Array.isArray(data)) {
+        setOrders(data);
+      } else {
+        setOrders([]);
+      }
     } catch (error) {
       console.error("Failed to fetch orders");
+      setOrders([]);
     } finally {
       setLoading(false);
     }
@@ -86,7 +93,7 @@ export default function OrdersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {orders.map((order) => (
+                  {Array.isArray(orders) && orders.map((order) => (
                     <tr key={order._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div className="font-bold text-gray-900">{order.customerName}</div>
@@ -125,7 +132,7 @@ export default function OrdersPage() {
                       </td>
                     </tr>
                   ))}
-                  {orders.length === 0 && (
+                  {(!Array.isArray(orders) || orders.length === 0) && (
                     <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">No orders placed yet.</td></tr>
                   )}
                 </tbody>
@@ -134,7 +141,6 @@ export default function OrdersPage() {
           )}
         </div>
 
-        {/* Order Details Modal */}
         {selectedOrder && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl">

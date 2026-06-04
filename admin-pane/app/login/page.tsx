@@ -29,6 +29,7 @@ export default function LoginPage() {
       localStorage.setItem("adminToken", data.token);
       localStorage.setItem("adminName", data.admin.name);
       localStorage.setItem("adminRole", data.admin.roleName);
+      localStorage.setItem("adminLevel", data.admin.roleLevel);
       localStorage.setItem("adminPermissions", JSON.stringify(data.admin.permissions));
       
       router.push("/"); // Redirect to dashboard

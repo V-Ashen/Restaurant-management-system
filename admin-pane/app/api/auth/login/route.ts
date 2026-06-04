@@ -49,6 +49,7 @@ export async function POST(req: Request) {
         name: admin.name, 
         email: admin.email,
         roleName: roleName,
+        roleLevel: roleLevel,
         permissions: permissions
       }
     }, { status: 200 });

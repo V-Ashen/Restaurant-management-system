@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Phone, MapPin, CheckCircle, Loader2 } from "lucide-react";
+import { Mail, Phone, MapPin, CheckCircle, Loader2, ArrowRight } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 
 export default function ContactPage() {
@@ -38,108 +38,201 @@ export default function ContactPage() {
     }
   };
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-        
-        {/* Contact Info */}
-        <div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">Get in Touch</h1>
-          <p className="text-gray-600 text-lg mb-10">
-            Have questions about our menu, reservations, or catering? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-          </p>
+  const inputBase =
+    "w-full bg-white/[0.04] border border-white/[0.08] text-white placeholder-white/20 text-sm px-4 py-3.5 rounded-xl focus:outline-none focus:border-orange-500/50 focus:bg-white/[0.07] transition-all duration-200";
 
-          <div className="space-y-6">
-            <div className="flex items-center gap-4 text-gray-700">
-              <div className="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center">
-                <MapPin size={24} />
+  return (
+    <div className="min-h-screen bg-[#0a0a0a]">
+
+      {/* ── Hero ── */}
+      <section className="relative pt-36 pb-20 px-6 text-center overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full bg-orange-600/10 blur-[110px] pointer-events-none" />
+        <p className="relative text-orange-400 text-xs font-bold tracking-[0.3em] uppercase mb-5">
+          Say Hello
+        </p>
+        <h1
+          className="relative text-5xl md:text-7xl font-black text-white tracking-tight mb-5"
+          style={{ fontFamily: "'Georgia', serif" }}
+        >
+          Get in{" "}
+          <em className="not-italic text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-300">
+            Touch
+          </em>
+        </h1>
+        <p className="relative text-white/40 text-lg max-w-md mx-auto leading-relaxed">
+          Questions about our menu, reservations, or catering? We'd love to hear from you.
+        </p>
+      </section>
+
+      {/* ── Main Grid ── */}
+      <section className="max-w-6xl mx-auto px-6 pb-28">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+
+          {/* ── Contact Info ── */}
+          <div className="space-y-5">
+            {/* Info cards */}
+            {[
+              {
+                icon: <MapPin size={18} />,
+                label: "Location",
+                value: "123 Flavor Street, Food City, FC 90210",
+              },
+              {
+                icon: <Phone size={18} />,
+                label: "Phone",
+                value: "+1 (555) 123-4567",
+              },
+              {
+                icon: <Mail size={18} />,
+                label: "Email",
+                value: "hello@flavorbite.com",
+              },
+            ].map(({ icon, label, value }) => (
+              <div
+                key={label}
+                className="group flex items-center gap-5 bg-white/[0.03] border border-white/[0.07] hover:border-orange-500/25 rounded-2xl px-6 py-5 transition-all duration-200 hover:bg-white/[0.05]"
+              >
+                <div className="bg-orange-500/10 text-orange-400 w-11 h-11 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-orange-500/20 transition-colors">
+                  {icon}
+                </div>
+                <div>
+                  <p className="text-white/30 text-xs font-semibold uppercase tracking-wider mb-0.5">
+                    {label}
+                  </p>
+                  <p className="text-white/75 text-sm font-medium">{value}</p>
+                </div>
               </div>
-              <div>
-                <h4 className="font-bold text-gray-900">Location</h4>
-                <p>123 Flavor Street, Food City, FC 90210</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 text-gray-700">
-              <div className="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center">
-                <Phone size={24} />
-              </div>
-              <div>
-                <h4 className="font-bold text-gray-900">Phone</h4>
-                <p>+1 (555) 123-4567</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 text-gray-700">
-              <div className="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center">
-                <Mail size={24} />
-              </div>
-              <div>
-                <h4 className="font-bold text-gray-900">Email</h4>
-                <p>hello@flavorbite.com</p>
+            ))}
+
+            {/* Hours card */}
+            <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl px-6 py-6 mt-2">
+              <p className="text-white/30 text-xs font-semibold uppercase tracking-wider mb-4">
+                Opening Hours
+              </p>
+              <div className="space-y-2.5">
+                {[
+                  { day: "Mon – Fri", hours: "10:00 AM – 10:00 PM" },
+                  { day: "Saturday", hours: "11:00 AM – 11:00 PM" },
+                  { day: "Sunday", hours: "12:00 PM – 9:00 PM" },
+                ].map(({ day, hours }) => (
+                  <div key={day} className="flex justify-between items-center">
+                    <span className="text-white/45 text-sm">{day}</span>
+                    <span className="text-white/70 text-sm font-medium">{hours}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Contact Form */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border">
-          {success ? (
-            <div className="h-full flex flex-col items-center justify-center text-center py-10">
-              <CheckCircle className="text-green-500 w-16 h-16 mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Message Sent!</h3>
-              <p className="text-gray-600">Thank you for reaching out. We will get back to you shortly.</p>
-              <button onClick={() => setSuccess(false)} className="mt-6 text-orange-600 font-bold hover:underline">
-                Send another message
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm font-medium">{error}</div>}
-              
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Your Name</label>
-                <input 
-                  type="text" 
-                  name="name" 
-                  required 
-                  value={formData.name} 
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
-                />
+          {/* ── Form ── */}
+          <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-8">
+            {success ? (
+              <div className="flex flex-col items-center justify-center text-center py-16 gap-4">
+                <div className="w-16 h-16 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mb-2">
+                  <CheckCircle className="text-green-400" size={28} />
+                </div>
+                <h3
+                  className="text-2xl font-black text-white"
+                  style={{ fontFamily: "'Georgia', serif" }}
+                >
+                  Message Sent!
+                </h3>
+                <p className="text-white/40 text-sm leading-relaxed max-w-xs">
+                  Thank you for reaching out. We'll get back to you as soon as possible.
+                </p>
+                <button
+                  onClick={() => setSuccess(false)}
+                  className="mt-4 text-orange-400 hover:text-orange-300 font-semibold text-sm flex items-center gap-1.5 transition-colors"
+                >
+                  Send another message <ArrowRight size={14} />
+                </button>
               </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
-                <input 
-                  type="email" 
-                  name="email" 
-                  required 
-                  value={formData.email} 
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Message</label>
-                <textarea 
-                  name="message" 
-                  required 
-                  rows={4} 
-                  value={formData.message} 
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 outline-none resize-none"
-                />
-              </div>
-              <button 
-                type="submit" 
-                disabled={isLoading}
-                className="w-full bg-gray-900 hover:bg-orange-600 text-white py-4 rounded-xl font-bold transition-colors flex justify-center items-center gap-2"
-              >
-                {isLoading ? <><Loader2 className="animate-spin" size={20} /> Sending...</> : "Send Message"}
-              </button>
-            </form>
-          )}
-        </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="mb-6">
+                  <h2
+                    className="text-2xl font-black text-white mb-1"
+                    style={{ fontFamily: "'Georgia', serif" }}
+                  >
+                    Send a message
+                  </h2>
+                  <p className="text-white/30 text-sm">We typically reply within a few hours.</p>
+                </div>
 
-      </div>
+                {error && (
+                  <div className="p-3.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm font-medium">
+                    {error}
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-xs font-semibold text-white/35 uppercase tracking-wider mb-2">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="John Doe"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className={inputBase}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-white/35 uppercase tracking-wider mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="john@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={inputBase}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-white/35 uppercase tracking-wider mb-2">
+                    Message
+                  </label>
+                  <textarea
+                    name="message"
+                    required
+                    rows={5}
+                    placeholder="Tell us how we can help..."
+                    value={formData.message}
+                    onChange={handleChange}
+                    className={`${inputBase} resize-none`}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full flex items-center justify-center gap-2.5 bg-orange-500 hover:bg-orange-400 disabled:bg-white/[0.06] disabled:text-white/25 text-white font-bold py-4 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-orange-500/25 text-sm"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="animate-spin" size={18} />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      Send Message
+                      <ArrowRight size={16} />
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
+
+        </div>
+      </section>
     </div>
   );
 }

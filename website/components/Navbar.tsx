@@ -3,71 +3,126 @@
 import Link from "next/link";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  
-  // Get cart items from our Zustand store
+  const pathname = usePathname();
+
   const cartItems = useCartStore((state) => state.items);
-  // Calculate total number of items in the cart
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/menu", label: "Menu" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
+  ];
+
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          
-          {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-orange-600">
-            Flavor<span className="text-gray-800">Bite</span>
-          </Link>
+    <>
+      <nav className="fixed top-0 inset-x-0 z-50">
+        {/* Frosted glass bar */}
+        <div className="bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-white/[0.06]">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="flex items-center justify-between h-16">
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-8 items-center">
-            <Link href="/" className="text-gray-600 hover:text-orange-600 font-medium">Home</Link>
-            <Link href="/menu" className="text-gray-600 hover:text-orange-600 font-medium">Menu</Link>
-            <Link href="/about" className="text-gray-600 hover:text-orange-600 font-medium">About</Link>
-            <Link href="/contact" className="text-gray-600 hover:text-orange-600 font-medium">Contact</Link>
-            
-            <Link href="/cart" className="relative text-gray-600 hover:text-orange-600">
-              <ShoppingCart size={24} />
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {totalItems}
+              {/* Logo */}
+              <Link
+                href="/"
+                className="flex items-center gap-2 shrink-0"
+                onClick={() => setIsOpen(false)}
+              >
+                <span className="text-xl">🍴</span>
+                <span className="text-white font-black text-lg tracking-tight">
+                  Flavor<span className="text-orange-400">Bite</span>
                 </span>
-              )}
-            </Link>
-          </div>
+              </Link>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
-            <Link href="/cart" className="relative text-gray-600 mr-4">
-              <ShoppingCart size={24} />
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
-            <button onClick={() => setIsOpen(!isOpen)} className="text-gray-600">
-              {isOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
+              {/* Desktop links */}
+              <div className="hidden md:flex items-center gap-1">
+                {navLinks.map(({ href, label }) => {
+                  const active = pathname === href;
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                        active
+                          ? "text-white bg-white/10"
+                          : "text-white/50 hover:text-white hover:bg-white/[0.06]"
+                      }`}
+                    >
+                      {label}
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Right actions */}
+              <div className="flex items-center gap-3">
+                {/* Cart */}
+                <Link
+                  href="/cart"
+                  className="relative flex items-center justify-center w-10 h-10 rounded-full bg-white/[0.05] border border-white/[0.08] text-white/60 hover:text-white hover:bg-white/[0.10] hover:border-orange-500/30 transition-all duration-200"
+                >
+                  <ShoppingCart size={18} />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-black rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-lg shadow-orange-500/40">
+                      {totalItems}
+                    </span>
+                  )}
+                </Link>
+
+                {/* Mobile hamburger */}
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-white/[0.05] border border-white/[0.08] text-white/60 hover:text-white hover:bg-white/[0.10] transition-all duration-200"
+                  aria-label="Toggle menu"
+                >
+                  {isOpen ? <X size={18} /> : <Menu size={18} />}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Menu Dropdown */}
+        {/* Mobile drawer */}
+        <div
+          className={`md:hidden bg-[#0d0d0d]/95 backdrop-blur-xl border-b border-white/[0.06] overflow-hidden transition-all duration-300 ease-in-out ${
+            isOpen ? "max-h-72 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-1">
+            {navLinks.map(({ href, label }) => {
+              const active = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setIsOpen(false)}
+                  className={`px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                    active
+                      ? "text-white bg-white/[0.08] border border-white/[0.08]"
+                      : "text-white/45 hover:text-white hover:bg-white/[0.05]"
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </nav>
+
+      {/* Backdrop for mobile menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link href="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-gray-600 font-medium">Home</Link>
-            <Link href="/menu" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-gray-600 font-medium">Menu</Link>
-            <Link href="/about" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-gray-600 font-medium">About</Link>
-            <Link href="/contact" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-gray-600 font-medium">Contact</Link>
-          </div>
-        </div>
+        <div
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
       )}
-    </nav>
+    </>
   );
 }

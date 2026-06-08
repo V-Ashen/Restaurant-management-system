@@ -63,11 +63,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30 text-xs tracking-widest uppercase">
-          <div className="w-px h-12 bg-gradient-to-b from-transparent to-white/20" />
-          scroll
-        </div>
       </section>
 
       {/* ── Stats ── */}

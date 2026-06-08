@@ -4,6 +4,10 @@ This is a full-stack business management application designed for restaurants to
 
 The system is split into two separate Next.js applications that connect to a single shared MongoDB database.
 
+🔗 Live Links
+Live (Customer): https://restaurant-management-system-6hhv.vercel.app/
+Live (Admin): https://restaurant-management-system-roan.vercel.app/
+
 ---
 
 ## Project Structure
